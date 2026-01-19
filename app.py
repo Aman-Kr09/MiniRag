@@ -47,8 +47,9 @@ def run_server():
     # By adding backend_dir to sys.path, "import rag_core" usually works 
     # IF the module is loaded freely.
     
+    port = int(os.getenv("PORT", 8000))
     try:
-        uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+        uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=True)
     except KeyboardInterrupt:
         logger.info("Server stopped by user.")
     except Exception as e:

@@ -18,63 +18,70 @@ A full-stack RAG (Retrieval-Augmented Generation) application built with **FastA
 2. **Backend**: FastAPI.
 3. **Storage**: Pinecone (Vector Search).
 
-## Setup & Run
+## Quick Start (Unified)
 
-### Prerequisites
-- Python 3.9+
-- Node.js 16+
-- API Keys for: Pinecone, OpenAI (or Gemini), and optionally Cohere.
+We have created an all-in-one script to build and run the application.
 
-### 1. Backend Setup
+1. **Install Dependencies**
+   ```bash
+   # Root
+   pip install -r backend/requirements.txt
+   
+   # Frontend
+   cd frontend
+   npm install
+   cd ..
+   ```
 
+2. **Run Application**
+   ```bash
+   python app.py
+   ```
+   This command will:
+   - Automatically build the React frontend (if not already built).
+   - Start the FastAPI backend serving both the API and the UI at `http://localhost:8000`.
+
+---
+
+## Deployment on Render
+
+This project is configured for easy deployment on **Render** as a single Web Service.
+
+### Option 1: Blueprints (Recommended)
+1. Fork/Push this repository to your GitHub.
+2. Log in to [Render](https://render.com).
+3. Click "New" -> "Blueprint".
+4. Connect your repository.
+5. Render will detect the `render.yaml` file and configure the service automatically.
+6. **Important**: You will be prompted to enter your API Keys (`GEMINI_API_KEY`, `PINECONE_API_KEY`, etc.) during the setup wizard.
+7. Click **Apply**.
+
+### Option 2: Manual Web Service
+1. Create a new **Web Service** explicitly connecting your repo.
+2. **Build Command**: `./render_build.sh`
+3. **Start Command**: `python app.py`
+4. **Environment Variables**: Add your keys manually in the Environment tab.
+
+---
+
+### Previous Manual Setup (Legacy)
+If you prefer to run them separately:
+
+**1. Backend**
 ```bash
 cd backend
 python -m venv venv
-# Windows
-.\venv\Scripts\activate
-# Mac/Linux
-source venv/bin/activate
-
+# Activate venv...
 pip install -r requirements.txt
-```
-
-**Environment Variables:**
-Rename `.env.example` to `.env` and fill in your keys:
-```
-PINECONE_API_KEY=...
-PINECONE_INDEX_NAME=mini-rag-index
-OPENAI_API_KEY=... 
-# OR use GEMINI_API_KEY=...
-COHERE_API_KEY=... (Optional, for reranking)
-```
-
-**Start Server:**
-```bash
 python main.py
-# Server runs on http://localhost:8000
 ```
 
-### 2. Frontend Setup
-
+**2. Frontend**
 ```bash
 cd frontend
 npm install
 npm run dev
-# App runs on http://localhost:5173
 ```
-
-## Deployment Guide
-
-### Backend (Render/Railway/Fly.io)
-1. Push code to GitHub.
-2. Link repository to hosting provider.
-3. Set Environment Variables in the provider's dashboard.
-4. Update `start` command to `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-
-### Frontend (Vercel/Netlify)
-1. Push code to GitHub.
-2. Import `frontend` directory in Vercel.
-3. **Important**: Add Environment Variable `VITE_API_URL` if you change the backend URL (you may need to update `api.js` to read from env vars).
 
 ## Trade-offs & Remarks
 - **Ingestion Speed**: Currently runs synchronously; for larger files, a background task queue (Celery/BullMQ) would be better.
