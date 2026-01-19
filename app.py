@@ -36,18 +36,9 @@ def run_server():
     backend_dir = os.path.join(os.getcwd(), "backend")
     sys.path.append(backend_dir)
     
-    logger.info("Starting Backend Server at http://localhost:8000")
+    port = int(os.environ.get("PORT", 10000))
+    logger.info(f"Starting Backend Server at http://0.0.0.0:{port}")
     
-    # We run uvicorn programmatically
-    # We use "backend.main:app" string so reload works if needed, 
-    # but reload requires the import path to be resolvable.
-    # Since we added backend to sys.path, "main:app" might work if we were in backend dir,
-    # but we are in root. "backend.main:app" works if root is in path (it is).
-    # BUT, inside main.py, "import rag_core" needs to work.
-    # By adding backend_dir to sys.path, "import rag_core" usually works 
-    # IF the module is loaded freely.
-    
-    port = int(os.getenv("PORT", 8000))
     try:
         uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=True)
     except KeyboardInterrupt:
